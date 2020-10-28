@@ -1,0 +1,3 @@
+class ElectionAudit < ApplicationRecord
+
+end

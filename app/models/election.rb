@@ -1,4 +1,5 @@
 class Election < ApplicationRecord
+  include Audit
   has_many :questions
   belongs_to :user
 

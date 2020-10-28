@@ -1,0 +1,52 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Audits for Election <%= @election.name %></h1>
+
+<table>
+  <thead>
+  <tr>
+    <th>Record Type</th>
+    <th>Change Time</th>
+    <th>Change Type</th>
+    <th>Question</th>
+    <th>Field</th>
+    <th>From</th>
+    <th>To</th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% last_changed_record = "" %>
+  <% @election_audits.each do |audit| %>
+    <% changed_record = "#{audit.record_type}/#{audit.record_id}" %>
+    <% changes = JSON.parse(audit.audit_changes) %>
+    <% JSON.parse(audit.audit_changes).each_pair do |field, change| %>
+      <% if %w(destroy create).include? audit.change_type %>
+        <tr>
+          <td><%= audit.record_type if changed_record != last_changed_record%></td>
+          <td><%= audit.event_date if changed_record != last_changed_record%></td>
+          <td><%= audit.change_type if changed_record != last_changed_record %></td>
+          <td><%= audit.question_id  unless audit.question_id.nil? %></td>
+          <td><%= field %></td>
+          <td><%= change if audit.change_type.eql? 'destroy' %></td>
+          <td><%= change if audit.change_type.eql? 'create' %></td>
+        </tr>
+      <% else %>
+        <tr>
+          <td><%= audit.record_type if changed_record != last_changed_record%></td>
+          <td><%= audit.event_date if changed_record != last_changed_record%></td>
+          <td><%= audit.change_type if changed_record != last_changed_record %></td>
+          <td><%= audit.question_id  unless audit.question_id.nil? %></td>
+          <td><%= field %></td>
+          <td><%= change[0] %></td>
+          <td><%= change[1] %></td>
+        </tr>
+      <% end %>
+      <% last_changed_record = changed_record %>
+    <% end %>
+  <% end %>
+  </tbody>
+</table>
+
+
+<%= link_to 'Back', election_path(@election) %>
